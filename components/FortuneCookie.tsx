@@ -1,13 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
-import { getRandomFortune, getFortuneOfTheDay } from '../utils/fortunes';
+import { getRandomFortune } from '../utils/fortunes';
 
 export default function FortuneCookie() {
   const [fortune, setFortune] = useState<string>('');
   const [isOpened, setIsOpened] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [useDailyFortune, setUseDailyFortune] = useState(false);
 
   // MiniKit ready call
   const { setFrameReady } = useMiniKit();
@@ -23,7 +22,7 @@ export default function FortuneCookie() {
     
     // Animation delay for better UX
     setTimeout(() => {
-      const newFortune = useDailyFortune ? getFortuneOfTheDay() : getRandomFortune();
+      const newFortune = getRandomFortune();
       setFortune(newFortune);
       setIsOpened(true);
       setIsAnimating(false);
@@ -66,24 +65,6 @@ export default function FortuneCookie() {
           <p className="text-indigo-300 text-sm mt-2">
             To HODL or not to HODL, that is the question
           </p>
-        </div>
-
-        {/* Cookie Mode Toggle */}
-        <div className="mb-6">
-          <div className="flex items-center justify-center space-x-4 text-white">
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={useDailyFortune}
-                onChange={(e) => setUseDailyFortune(e.target.checked)}
-                className="sr-only"
-              />
-              <div className={`w-5 h-5 border-2 border-white rounded ${useDailyFortune ? 'bg-purple-500' : 'bg-transparent'} flex items-center justify-center mr-2`}>
-                {useDailyFortune && <span className="text-white text-xs">✓</span>}
-              </div>
-              <span className="text-sm">Daily Fortune Mode</span>
-            </label>
-          </div>
         </div>
 
         {/* Cookie or Fortune Display */}
@@ -131,7 +112,7 @@ export default function FortuneCookie() {
                 {isAnimating ? '🎭 Channeling Shakespeare...' : '👆 Tap the sacred cookie above'}
               </p>
               <p className="text-sm opacity-75">
-                {useDailyFortune ? 'Today\'s wisdom awaits...' : 'Random wisdom mode active'}
+                Random wisdom mode active
               </p>
             </div>
           ) : (

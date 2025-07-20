@@ -28,7 +28,54 @@ export const fortunes = [
   "Et tu, Brute? Even you sold at the bottom? 🗡️",
   "Cry 'Havoc!' and let slip the dogs of FOMO 🐕",
   "Friends, Romans, countrymen, lend me your ears... and your leverage 👥",
-  "Beware the Ides of March... and all other trading days 📅"
+  "Beware the Ides of March... and all other trading days 📅",
+  "Thy wallet shall vanish swifter than a jester's dignity. 🎭",
+  "Beware: thy gains are but illusions wrapped in green candles. 🕯️",
+  "A fool's pump is followed by a knave's dump. 🎢",
+  "Thy gas fee shall bite harder than love's first betrayal. 💸",
+  "Thy Lambo dreams shall dissolve into the tavern floor. 🍻",
+  "An airdrop promised is often but hot wind. 💨",
+  "Ye shall awaken to red candles and much weeping. 😭",
+  "Apeth boldly, but prepareth to sleepeth in poverty. 🦍",
+  "Thou who followeth memecoins shall dance with beggars. 🤡",
+  "A chart too green must surely redden by sunset. 🟩🟥",
+  "The bull may prance, but the bear lies ever near. 🐂🐻",
+  "Shill softly, for thy token is naught but vapor. 💨",
+  "Great gains come to those who dump upon the greater fool. 😈",
+  "Thine roadmap is but a minstrel's tale. 📜",
+  "Thou wilt eat noodles tonight… and tomorrow… and forever. 🍜",
+  "Presale riches end in peasant tears. 🧻",
+  "Thou shalt mint, and rue the day. 🤔",
+  "Hark! Thy coin desireth thee broke. 💀",
+  "Ye shall dream of riches and awaken to dust. 🌪️",
+  "A red candle is but tomorrow's heartbreak delivered early. 🩸",
+  "Beware the green wick… it is but bait. 🕯️",
+  "Thou shalt stake… and watch thy gold wither. 🐌",
+  "Peasant by morning, peasant by evening — crypto changeth not thy fate. 🏚️",
+  "Thy seed phrase shalt flee like a scorned mistress. 🫣",
+  "Thy bags are cursed heirlooms, passed to thine children. 🎒",
+  "Thou wilt gamble for gold and win naught but onions. 🧅",
+  "Strong hands are no match for thy weak mind. 🤯",
+  "The chart shall climbeth… only to belly-flop. 🏊‍♂️",
+  "Thine treasure is but digital vapour with a fancy name. 💨",
+  "Hold fast! Or better yet, run fast. 🏃‍♂️",
+  "Thou who trade without thought shall feast upon air. 🌬️",
+  "Thy staking APY shall vanish quicker than thy lover. 🥀",
+  "Rug or riches? The coin shall decide… cruelly. 🪙",
+  "Liquidity flee'th faster than wenches at sunrise. 🌅",
+  "Thy pumps shall turn to dumps before thine ale groweth warm. 🍺",
+  "Thy portfolio shall resemble a battlefield… and thou art losing. ⚔️",
+  "Thy gain is but bait for thy neighbor's loss. 🎣",
+  "Thou art but one whale fart away from ruin. 🐋💨",
+  "Sleep not, lest thy bags be lighter by dawn. 🪦",
+  "Thine coin is mooning… towards the center of the earth. 🌙🌍",
+  "Thy DEX is but a den of jesters. 🤡",
+  "Rugpulls lurketh where greed doth flourish. 🏴‍☠️",
+  "Thou shalt flip… and landeth upon thy face. 🪃",
+  "Thy bull run is but a donkey's trot. 🐂🐴",
+  "Cry havoc, and prepare thy wallet for slaughter. 🗡️",
+  "Green candles doth bring false hope to feeble minds. 🟢",
+  "Thou shalt whisper 'retire rich'… and scream 'rekt' instead. 😵‍💫"
 ];
 
 export function getRandomFortune(): string {
@@ -40,4 +87,4 @@ export function getFortuneOfTheDay(): string {
   const today = new Date().toDateString();
   const seed = today.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return fortunes[seed % fortunes.length];
-} 
+}
