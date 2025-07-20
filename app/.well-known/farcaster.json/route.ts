@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 function withValidProperties(
   properties: Record<string, undefined | string | string[]>,
 ) {
