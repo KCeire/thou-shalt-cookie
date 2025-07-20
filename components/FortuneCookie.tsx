@@ -34,19 +34,21 @@ export default function FortuneCookie() {
     setFortune('');
   };
 
-  const shareFortune = () => {
-    const shareText = `"${fortune}" - Thou Shalt Cookie 🎭🥠`;
+  const shareFortune = async () => {
+    const shareText = `"${fortune}" - Thou Shalt Cookie 🎭🥠\n\nGet your own Shakespearean crypto wisdom at thoushaltcookie.xyz`;
     
-    if (navigator.share) {
-      navigator.share({
-        title: 'Thou Shalt Cookie - Shakespearean Crypto Wisdom',
-        text: shareText,
-        url: window.location.href
-      });
-    } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(shareText);
-      alert('Fortune copied to clipboard! 📋');
+    try {
+      await navigator.clipboard.writeText(shareText);
+      alert('Fortune copied to clipboard! 📋\n\nShare this Shakespearean wisdom and let others discover thoushaltcookie.xyz! 🎭');
+    } catch {
+      // Fallback for older browsers or restricted clipboard access
+      const textArea = document.createElement('textarea');
+      textArea.value = shareText;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert('Fortune copied to clipboard! 📋\n\nShare this wisdom and spread the word about thoushaltcookie.xyz! 🎭');
     }
   };
 
@@ -136,8 +138,29 @@ export default function FortuneCookie() {
 
         {/* Footer */}
         <div className="mt-12 text-indigo-300 text-sm space-y-2">
-          <p>✨ Built with MiniKit & OnchainKit ✨</p>
-          <p>🎭 All the world is a blockchain, and all traders merely hodlers 🎭</p>
+          {/* Creator Credits */}
+          <div className="pt-4">
+            <p className="text-indigo-400 text-xs">
+              Created for fun by{' '}
+              <a 
+                href="https://x.com/stellarextinct" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 underline"
+              >
+                @stellarextinct
+              </a>
+              {' '}•{' '}
+              <a 
+                href="https://farcaster.xyz/kc-8" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-purple-400 hover:text-purple-300 underline"
+              >
+                Farcaster
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
