@@ -1,5 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useMiniKit } from '@coinbase/onchainkit/minikit';
 import { getRandomFortune, getFortuneOfTheDay } from '../utils/fortunes';
 
 export default function FortuneCookie() {
@@ -7,6 +8,13 @@ export default function FortuneCookie() {
   const [isOpened, setIsOpened] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [useDailyFortune, setUseDailyFortune] = useState(false);
+
+  // MiniKit ready call
+  const { setFrameReady } = useMiniKit();
+
+  useEffect(() => {
+    setFrameReady();
+  }, [setFrameReady]);
 
   const crackCookie = () => {
     if (isAnimating) return;
