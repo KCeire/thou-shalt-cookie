@@ -57,7 +57,6 @@ export default function FortuneCookie() {
       <div className="text-center max-w-lg w-full">
         
         {/* Header */}
-        <div className="mb-8">
           <h1 className="text-3xl text-white mb-3 drop-shadow-lg text-center" 
               style={{ 
                 fontFamily: 'Cinzel, "Old English Text MT", "Blackletter", "Times New Roman", serif',
@@ -66,10 +65,10 @@ export default function FortuneCookie() {
                 letterSpacing: '0.03em',
                 textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
                 lineHeight: '1.2',
-                whiteSpace: 'nowrap',
+                // Remove whiteSpace: 'nowrap' to allow wrapping
                 overflow: 'visible'
               }}>
-            🎭 Thou Shalt Cookie
+            🎭 Thou Shalt Cookie 🎭
           </h1>
           <p className="text-indigo-200 text-lg">
             Shakespearean wisdom meets crypto chaos
