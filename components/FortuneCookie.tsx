@@ -58,9 +58,13 @@ export default function FortuneCookie() {
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-white mb-3 drop-shadow-lg" style={{ fontFamily: 'Cinzel, serif' }}>
-  🎭 Thou Shalt Cookie
-          </h1>   
+          <h1 className="text-5xl font-bold text-white mb-3 drop-shadow-lg font-serif" 
+              style={{ 
+                fontFamily: 'Cinzel, "Times New Roman", Georgia, serif',
+                fontWeight: '700'
+              }}>
+            🎭 Thou Shalt Cookie
+          </h1>
           <p className="text-indigo-200 text-lg">
             Shakespearean wisdom meets crypto chaos
           </p>
@@ -141,16 +145,7 @@ export default function FortuneCookie() {
           {/* Creator Credits */}
           <div className="pt-4">
             <p className="text-indigo-400 text-xs">
-              Created for fun by{' '}
-              <a 
-                href="https://x.com/stellarextinct" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 underline"
-              >
-                @stellarextinct
-              </a>
-              {' '}•{' '}
+              Created for fun by KC •{' '}
               <a 
                 href="https://farcaster.xyz/kc-8" 
                 target="_blank" 
@@ -158,6 +153,15 @@ export default function FortuneCookie() {
                 className="text-purple-400 hover:text-purple-300 underline"
               >
                 Farcaster
+              </a>
+              {' '}•{' '}
+              <a 
+                href="https://x.com/stellarextinct" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 underline"
+              >
+                X
               </a>
             </p>
           </div>
