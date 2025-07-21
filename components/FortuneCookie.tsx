@@ -58,11 +58,12 @@ export default function FortuneCookie() {
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-white mb-3 drop-shadow-lg font-serif" 
-              style={{ 
-                fontFamily: 'Cinzel, "Times New Roman", Georgia, serif',
-                fontWeight: '700'
-              }}>
+          <h1 className="text-5xl font-bold text-white mb-3 drop-shadow-lg" 
+            style={{ 
+            fontFamily: '"Times New Roman", "Book Antiqua", "Palatino Linotype", serif',
+            fontWeight: '700',
+            letterSpacing: '0.02em'
+           }}>
             🎭 Thou Shalt Cookie
           </h1>
           <p className="text-indigo-200 text-lg">
