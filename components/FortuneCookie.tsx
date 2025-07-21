@@ -58,17 +58,19 @@ export default function FortuneCookie() {
         
         {/* Header */}
         <div className="mb-8">
-        <h1 className="text-4xl text-white mb-3 drop-shadow-lg" 
-            style={{ 
-              fontFamily: 'Georgia, "Book Antiqua", "Palatino Linotype", "Times New Roman", serif',
-              fontWeight: 'bold',
-              fontSize: '2.5rem',
-              letterSpacing: '0.02em',
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-              lineHeight: '1.1'
-            }}>
-          🎭 Thou Shalt Cookie
-        </h1>
+          <h1 className="text-3xl text-white mb-3 drop-shadow-lg text-center" 
+              style={{ 
+                fontFamily: 'Cinzel, "Old English Text MT", "Blackletter", "Times New Roman", serif',
+                fontWeight: '700',
+                fontSize: '2rem',
+                letterSpacing: '0.03em',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+                lineHeight: '1.2',
+                whiteSpace: 'nowrap',
+                overflow: 'visible'
+              }}>
+            🎭 Thou Shalt Cookie
+          </h1>
           <p className="text-indigo-200 text-lg">
             Shakespearean wisdom meets crypto chaos
           </p>
