@@ -58,9 +58,9 @@ export default function FortuneCookie() {
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-5xl font-bold text-white mb-3 drop-shadow-lg">
-            🎭 Thou Shalt Cookie
-          </h1>
+          <h1 className="text-5xl font-bold text-white mb-3 drop-shadow-lg" style={{ fontFamily: 'Cinzel, serif' }}>
+  🎭 Thou Shalt Cookie
+          </h1>   
           <p className="text-indigo-200 text-lg">
             Shakespearean wisdom meets crypto chaos
           </p>
