@@ -2,11 +2,17 @@
 import { useState, useEffect } from 'react';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
 import { getRandomFortune } from '../utils/fortunes';
+import { pay, getPaymentStatus } from '@base-org/account';
 
 export default function FortuneCookie() {
   const [fortune, setFortune] = useState<string>('');
   const [isOpened, setIsOpened] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showTipOptions, setShowTipOptions] = useState(false);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  // Your wallet address for receiving payments
+  const RECIPIENT_ADDRESS = "0xdE2bDb0F443CAda8102A73940CC8E27079c513D4"; // Replace with your actual address
 
   // MiniKit ready call
   const { setFrameReady } = useMiniKit();
@@ -19,19 +25,57 @@ export default function FortuneCookie() {
     if (isAnimating) return;
     
     setIsAnimating(true);
+    setShowTipOptions(false);
     
-    // Animation delay for better UX
     setTimeout(() => {
       const newFortune = getRandomFortune();
       setFortune(newFortune);
       setIsOpened(true);
       setIsAnimating(false);
+      // Show tip options after a delay
+      setTimeout(() => setShowTipOptions(true), 2000);
     }, 800);
   };
 
   const resetCookie = () => {
     setIsOpened(false);
     setFortune('');
+    setShowTipOptions(false);
+  };
+
+  const handleTip = async (amount: string, message: string) => {
+    try {
+      setIsProcessingPayment(true);
+      
+      const result = await pay({
+        amount,
+        to: RECIPIENT_ADDRESS,
+        testnet: false // Set to false for mainnet
+      }) as { id: string };
+
+      // Poll for payment completion
+      const checkPayment = async () => {
+        const { status } = await getPaymentStatus({ 
+          id: result.id,
+          testnet: false // Must match the testnet setting above
+        });
+        
+        if (status === 'completed') {
+          alert(`🎭 ${message} The Bard thanks thee for thy generosity!`);
+          setShowTipOptions(false);
+        } else if (status === 'pending') {
+          // Keep checking
+          setTimeout(checkPayment, 2000);
+        }
+      };
+
+      checkPayment();
+    } catch (error) {
+      console.error('Payment failed:', error);
+      alert('Payment failed. Please try again.');
+    } finally {
+      setIsProcessingPayment(false);
+    }
   };
 
   const shareFortune = async () => {
@@ -41,7 +85,6 @@ export default function FortuneCookie() {
       await navigator.clipboard.writeText(shareText);
       alert('Fortune copied to clipboard! 📋\n\nShare this Shakespearean wisdom and let others discover thoushaltcookie.xyz! 🎭');
     } catch {
-      // Fallback for older browsers or restricted clipboard access
       const textArea = document.createElement('textarea');
       textArea.value = shareText;
       document.body.appendChild(textArea);
@@ -51,6 +94,27 @@ export default function FortuneCookie() {
       alert('Fortune copied to clipboard! 📋\n\nShare this wisdom and spread the word about thoushaltcookie.xyz! 🎭');
     }
   };
+
+  // Base Pay Button Component (styled to match your theme)
+  const ThemedPayButton = ({ 
+    onClick, 
+    children, 
+    amount, 
+    disabled = false 
+  }: {
+    onClick: () => void;
+    children: React.ReactNode;
+    amount: string;
+    disabled?: boolean;
+  }) => (
+    <button
+      onClick={onClick}
+      disabled={disabled || isProcessingPayment}
+      className="bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+    >
+      {isProcessingPayment ? '⏳ Processing...' : `${children} ($${amount})`}
+    </button>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex flex-col items-center justify-center p-6">
@@ -81,7 +145,6 @@ export default function FortuneCookie() {
         {/* Cookie or Fortune Display */}
         <div className="mb-8">
           {!isOpened ? (
-            // Cookie Button
             <div className="text-center">
               <button
                 onClick={crackCookie}
@@ -102,7 +165,6 @@ export default function FortuneCookie() {
               </p>
             </div>
           ) : (
-            // Fortune Display
             <div className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-white/30 shadow-2xl">
               <div className="text-7xl mb-6">📜</div>
               <blockquote className="text-white text-xl leading-relaxed font-serif italic">
@@ -111,6 +173,33 @@ export default function FortuneCookie() {
               <div className="mt-4 text-indigo-200 text-sm">
                 — The Crypto Bard
               </div>
+              
+              {/* Tip Options */}
+              {showTipOptions && (
+                <div className="mt-6 pt-4 border-t border-white/20">
+                  <p className="text-amber-300 text-sm mb-3">Enjoyed the wisdom? Support the Bard! 🎭</p>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    <ThemedPayButton
+                      onClick={() => handleTip('1.00', 'A coin for the jester!')}
+                      amount="1"
+                    >
+                      Toss a Coin
+                    </ThemedPayButton>
+                    <ThemedPayButton
+                      onClick={() => handleTip('3.00', 'A generous patron!')}
+                      amount="3"
+                    >
+                      Support the Arts
+                    </ThemedPayButton>
+                    <ThemedPayButton
+                      onClick={() => handleTip('5.00', 'A noble benefactor!')}
+                      amount="5"
+                    >
+                      Royal Patronage
+                    </ThemedPayButton>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -147,7 +236,6 @@ export default function FortuneCookie() {
 
         {/* Footer */}
         <div className="mt-12 text-indigo-300 text-sm space-y-2">
-          {/* Creator Credits */}
           <div className="pt-4">
             <p className="text-indigo-400 text-xs">
               Created for fun by KC •{' '}
