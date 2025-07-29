@@ -32,8 +32,8 @@ export default function FortuneCookie() {
       setFortune(newFortune);
       setIsOpened(true);
       setIsAnimating(false);
-      // Show tip options after a delay
-      setTimeout(() => setShowTipOptions(true), 2000);
+      // Show tip options immediately
+      setShowTipOptions(true);
     }, 800);
   };
 
@@ -50,14 +50,14 @@ export default function FortuneCookie() {
       const result = await pay({
         amount,
         to: RECIPIENT_ADDRESS,
-        testnet: false // Set to false for mainnet
+        testnet: true // Set to false for mainnet
       }) as { id: string };
 
       // Poll for payment completion
       const checkPayment = async () => {
         const { status } = await getPaymentStatus({ 
           id: result.id,
-          testnet: false // Must match the testnet setting above
+          testnet: true // Must match the testnet setting above
         });
         
         if (status === 'completed') {
@@ -262,4 +262,4 @@ export default function FortuneCookie() {
       </div>
     </div>
   );
-} 
+}
