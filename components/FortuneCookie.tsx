@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState, useEffect } from 'react';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
@@ -42,13 +43,30 @@ export default function FortuneCookie() {
     setShowTipOptions(false);
   };
 
-  const handlePaymentResult = (result: { success: boolean; error?: string }, message: string) => {
+  const handlePaymentResult = (result: { success: boolean; error?: string; transactionHash?: string; blockNumber?: number }, message: string) => {
     if (result.success) {
       alert(`🎭 ${message} The Bard thanks thee for thy generosity!`);
       setShowTipOptions(false);
+      console.log('Payment successful:', result);
+      
+      // Log transaction details if available
+      if (result.transactionHash) {
+        console.log('Transaction hash:', result.transactionHash);
+      }
+      if (result.blockNumber) {
+        console.log('Block number:', result.blockNumber);
+      }
     } else {
       console.error('Payment failed:', result.error);
-      alert('Payment failed. Please try again.');
+      
+      // Handle different error types
+      if (result.error?.includes('insufficient funds')) {
+        alert('Insufficient funds. Please add USDC to your wallet.');
+      } else if (result.error?.includes('user rejected')) {
+        alert('Payment cancelled by user.');
+      } else {
+        alert('Payment failed. Please try again.');
+      }
     }
   };
 
@@ -130,57 +148,62 @@ export default function FortuneCookie() {
               {/* Tip Options with BasePayButton */}
               {showTipOptions && (
                 <div className="mt-6 pt-4 border-t border-white/20">
-                  <p className="text-amber-300 text-sm mb-4">Enjoyed the wisdom? Support the Bard! 🎭</p>
+                  <p className="text-amber-300 text-sm mb-6">Enjoyed the wisdom? Support the Bard! 🎭</p>
                   
-                  {/* $1 Tip */}
-                  <div className="mb-3 relative">
-                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                      Toss a Coin - $1
+                  <div className="space-y-4">
+                    {/* $1 Tip */}
+                    <div className="flex flex-col items-center">
+                      <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-2 shadow-lg">
+                        Toss a Coin - $1 💰
+                      </div>
+                      <BasePayButton
+                        paymentOptions={{
+                          amount: '1.00',
+                          to: RECIPIENT_ADDRESS,
+                          testnet: false
+                        }}
+                        colorScheme="light"
+                        size="medium"
+                        variant="solid"
+                        onPaymentResult={(result: { success: boolean; error?: string; transactionHash?: string; blockNumber?: number }) => handlePaymentResult(result, 'A coin for the jester!')}
+                      />
                     </div>
-                    <BasePayButton
-                      paymentOptions={{
-                        amount: '1.00',
-                        to: RECIPIENT_ADDRESS,
-                        testnet: false
-                      }}
-                      colorScheme="light"
-                      size="medium"
-                      onPaymentResult={(result: { success: boolean; error?: string }) => handlePaymentResult(result, 'A coin for the jester!')}
-                    />
-                  </div>
-                  
-                  {/* $3 Tip */}
-                  <div className="mb-3 relative">
-                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                      Support the Arts - $3
+                    
+                    {/* $3 Tip */}
+                    <div className="flex flex-col items-center">
+                      <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-2 shadow-lg">
+                        Support the Arts - $3 🎨
+                      </div>
+                      <BasePayButton
+                        paymentOptions={{
+                          amount: '3.00',
+                          to: RECIPIENT_ADDRESS,
+                          testnet: false
+                        }}
+                        colorScheme="light"
+                        size="medium"
+                        variant="solid"
+                        onPaymentResult={(result: { success: boolean; error?: string; transactionHash?: string; blockNumber?: number }) => handlePaymentResult(result, 'A generous patron!')}
+                      />
                     </div>
-                    <BasePayButton
-                      paymentOptions={{
-                        amount: '3.00',
-                        to: RECIPIENT_ADDRESS,
-                        testnet: false
-                      }}
-                      colorScheme="light"
-                      size="medium"
-                      onPaymentResult={(result: { success: boolean; error?: string }) => handlePaymentResult(result, 'A generous patron!')}
-                    />
-                  </div>
-                  
-                  {/* $5 Tip */}
-                  <div className="mb-3 relative">
-                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white px-2 py-1 rounded text-xs font-semibold">
-                      Royal Patronage - $5
+                    
+                    {/* $5 Tip */}
+                    <div className="flex flex-col items-center">
+                      <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-2 shadow-lg">
+                        Royal Patronage - $5 👑
+                      </div>
+                      <BasePayButton
+                        paymentOptions={{
+                          amount: '5.00',
+                          to: RECIPIENT_ADDRESS,
+                          testnet: false
+                        }}
+                        colorScheme="light"
+                        size="medium"
+                        variant="solid"
+                        onPaymentResult={(result: { success: boolean; error?: string; transactionHash?: string; blockNumber?: number }) => handlePaymentResult(result, 'A noble benefactor!')}
+                      />
                     </div>
-                    <BasePayButton
-                      paymentOptions={{
-                        amount: '5.00',
-                        to: RECIPIENT_ADDRESS,
-                        testnet: false
-                      }}
-                      colorScheme="light"
-                      size="medium"
-                      onPaymentResult={(result: { success: boolean; error?: string }) => handlePaymentResult(result, 'A noble benefactor!')}
-                    />
                   </div>
                 </div>
               )}
