@@ -2,17 +2,16 @@
 import { useState, useEffect } from 'react';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
 import { getRandomFortune } from '../utils/fortunes';
-import { pay, getPaymentStatus } from '@base-org/account';
+import { BasePayButton } from '@base-org/account-ui/react';
 
 export default function FortuneCookie() {
   const [fortune, setFortune] = useState<string>('');
   const [isOpened, setIsOpened] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showTipOptions, setShowTipOptions] = useState(false);
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   // Your wallet address for receiving payments
-  const RECIPIENT_ADDRESS = "0xdE2bDb0F443CAda8102A73940CC8E27079c513D4"; // Replace with your actual address
+  const RECIPIENT_ADDRESS = "0xe72421aE2B79b21AF3550d8f6adF19b67ccCBc8B";
 
   // MiniKit ready call
   const { setFrameReady } = useMiniKit();
@@ -32,7 +31,7 @@ export default function FortuneCookie() {
       setFortune(newFortune);
       setIsOpened(true);
       setIsAnimating(false);
-      // Show tip options with minimal delay for SDK readiness
+      // Show tip options with minimal delay
       setTimeout(() => setShowTipOptions(true), 300);
     }, 800);
   };
@@ -43,38 +42,13 @@ export default function FortuneCookie() {
     setShowTipOptions(false);
   };
 
-  const handleTip = async (amount: string, message: string) => {
-    try {
-      setIsProcessingPayment(true);
-      
-      const result = await pay({
-        amount,
-        to: RECIPIENT_ADDRESS,
-        testnet: false // Set to false for mainnet
-      }) as { id: string };
-
-      // Poll for payment completion
-      const checkPayment = async () => {
-        const { status } = await getPaymentStatus({ 
-          id: result.id,
-          testnet: false // Must match the testnet setting above
-        });
-        
-        if (status === 'completed') {
-          alert(`🎭 ${message} The Bard thanks thee for thy generosity!`);
-          setShowTipOptions(false);
-        } else if (status === 'pending') {
-          // Keep checking
-          setTimeout(checkPayment, 2000);
-        }
-      };
-
-      checkPayment();
-    } catch (error) {
-      console.error('Payment failed:', error);
+  const handlePaymentResult = (result: { success: boolean; error?: string }, message: string) => {
+    if (result.success) {
+      alert(`🎭 ${message} The Bard thanks thee for thy generosity!`);
+      setShowTipOptions(false);
+    } else {
+      console.error('Payment failed:', result.error);
       alert('Payment failed. Please try again.');
-    } finally {
-      setIsProcessingPayment(false);
     }
   };
 
@@ -94,27 +68,6 @@ export default function FortuneCookie() {
       alert('Fortune copied to clipboard! 📋\n\nShare this wisdom and spread the word about thoushaltcookie.xyz! 🎭');
     }
   };
-
-  // Base Pay Button Component (styled to match your theme)
-  const ThemedPayButton = ({ 
-    onClick, 
-    children, 
-    amount, 
-    disabled = false 
-  }: {
-    onClick: () => void;
-    children: React.ReactNode;
-    amount: string;
-    disabled?: boolean;
-  }) => (
-    <button
-      onClick={onClick}
-      disabled={disabled || isProcessingPayment}
-      className="bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white px-4 py-2 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
-    >
-      {isProcessingPayment ? '⏳ Processing...' : `${children} ($${amount})`}
-    </button>
-  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 flex flex-col items-center justify-center p-6">
@@ -174,29 +127,60 @@ export default function FortuneCookie() {
                 — The Crypto Bard
               </div>
               
-              {/* Tip Options */}
+              {/* Tip Options with BasePayButton */}
               {showTipOptions && (
                 <div className="mt-6 pt-4 border-t border-white/20">
-                  <p className="text-amber-300 text-sm mb-3">Enjoyed the wisdom? Support the Bard! 🎭</p>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    <ThemedPayButton
-                      onClick={() => handleTip('1.00', 'A coin for the jester!')}
-                      amount="1"
-                    >
-                      Toss a Coin
-                    </ThemedPayButton>
-                    <ThemedPayButton
-                      onClick={() => handleTip('3.00', 'A generous patron!')}
-                      amount="3"
-                    >
-                      Support the Arts
-                    </ThemedPayButton>
-                    <ThemedPayButton
-                      onClick={() => handleTip('5.00', 'A noble benefactor!')}
-                      amount="5"
-                    >
-                      Royal Patronage
-                    </ThemedPayButton>
+                  <p className="text-amber-300 text-sm mb-4">Enjoyed the wisdom? Support the Bard! 🎭</p>
+                  
+                  {/* $1 Tip */}
+                  <div className="mb-3 relative">
+                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      Toss a Coin - $1
+                    </div>
+                    <BasePayButton
+                      paymentOptions={{
+                        amount: '1.00',
+                        to: RECIPIENT_ADDRESS,
+                        testnet: false
+                      }}
+                      colorScheme="light"
+                      size="medium"
+                      onPaymentResult={(result: { success: boolean; error?: string }) => handlePaymentResult(result, 'A coin for the jester!')}
+                    />
+                  </div>
+                  
+                  {/* $3 Tip */}
+                  <div className="mb-3 relative">
+                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      Support the Arts - $3
+                    </div>
+                    <BasePayButton
+                      paymentOptions={{
+                        amount: '3.00',
+                        to: RECIPIENT_ADDRESS,
+                        testnet: false
+                      }}
+                      colorScheme="light"
+                      size="medium"
+                      onPaymentResult={(result: { success: boolean; error?: string }) => handlePaymentResult(result, 'A generous patron!')}
+                    />
+                  </div>
+                  
+                  {/* $5 Tip */}
+                  <div className="mb-3 relative">
+                    <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-amber-600 text-white px-2 py-1 rounded text-xs font-semibold">
+                      Royal Patronage - $5
+                    </div>
+                    <BasePayButton
+                      paymentOptions={{
+                        amount: '5.00',
+                        to: RECIPIENT_ADDRESS,
+                        testnet: false
+                      }}
+                      colorScheme="light"
+                      size="medium"
+                      onPaymentResult={(result: { success: boolean; error?: string }) => handlePaymentResult(result, 'A noble benefactor!')}
+                    />
                   </div>
                 </div>
               )}
@@ -262,4 +246,4 @@ export default function FortuneCookie() {
       </div>
     </div>
   );
-}
+} 
