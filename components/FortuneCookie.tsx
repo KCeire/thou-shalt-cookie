@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState, useEffect } from 'react';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
 import { getRandomFortune } from '../utils/fortunes';
-// Try one of these imports if the current one doesn't work:
+import { pay, getPaymentStatus } from '@base-org/account';
 import { BasePayButton } from '@base-org/account-ui/react';
-// Alternative imports to try if above doesn't work:
-// import { BasePayButton } from '@base-org/account-ui';
-// import BasePayButton from '@base-org/account-ui/react/BasePayButton';
 
 export default function FortuneCookie() {
   const [fortune, setFortune] = useState<string>('');
@@ -16,7 +12,7 @@ export default function FortuneCookie() {
   const [showTipOptions, setShowTipOptions] = useState(false);
 
   // Your wallet address for receiving payments
-  const RECIPIENT_ADDRESS = "0xe72421aE2B79b21AF3550d8f6adF19b67ccCBc8B";
+  const RECIPIENT_ADDRESS = "0xdE2bDb0F443CAda8102A73940CC8E27079c513D4"; // Replace with your actual address
 
   // MiniKit ready call
   const { setFrameReady } = useMiniKit();
@@ -36,7 +32,7 @@ export default function FortuneCookie() {
       setFortune(newFortune);
       setIsOpened(true);
       setIsAnimating(false);
-      // Show tip options with minimal delay
+      // Show tip options with minimal delay for SDK readiness
       setTimeout(() => setShowTipOptions(true), 300);
     }, 800);
   };
@@ -47,20 +43,31 @@ export default function FortuneCookie() {
     setShowTipOptions(false);
   };
 
-  // Handle payment for different tip amounts
-  const handleTipPayment = async (amount: string, message: string) => {
+  const handleTip = async (amount: string, message: string) => {
     try {
-      // This is where you would integrate with the actual payment system
-      // For now, we'll simulate the payment process
-      console.log(`Processing ${amount} payment to ${RECIPIENT_ADDRESS}`);
-      
-      // Here you would typically use Base's payment SDK
-      // const result = await processPayment({ amount, to: RECIPIENT_ADDRESS });
-      
-      // Simulate success for now
-      alert(`🎭 ${message} The Bard thanks thee for thy generosity!`);
-      setShowTipOptions(false);
-      
+      const result = await pay({
+        amount,
+        to: RECIPIENT_ADDRESS,
+        testnet: false // Set to false for mainnet
+      }) as { id: string };
+
+      // Poll for payment completion
+      const checkPayment = async () => {
+        const { status } = await getPaymentStatus({ 
+          id: result.id,
+          testnet: false // Must match the testnet setting above
+        });
+        
+        if (status === 'completed') {
+          alert(`🎭 ${message} The Bard thanks thee for thy generosity!`);
+          setShowTipOptions(false);
+        } else if (status === 'pending') {
+          // Keep checking
+          setTimeout(checkPayment, 2000);
+        }
+      };
+
+      checkPayment();
     } catch (error) {
       console.error('Payment failed:', error);
       alert('Payment failed. Please try again.');
@@ -142,45 +149,22 @@ export default function FortuneCookie() {
                 — The Crypto Bard
               </div>
               
-              {/* Tip Options with BasePayButton */}
+              {/* Tip Options */}
               {showTipOptions && (
                 <div className="mt-6 pt-4 border-t border-white/20">
-                  <p className="text-amber-300 text-sm mb-6">Enjoyed the wisdom? Support the Bard! 🎭</p>
+                  <p className="text-amber-300 text-sm mb-4">Enjoyed the wisdom? Support the Bard! 🎭</p>
                   
-                  <div className="space-y-4">
-                    {/* $1 Tip */}
-                    <div className="flex flex-col items-center">
-                      <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-2 shadow-lg">
-                        Toss a Coin - $1 💰
-                      </div>
-                      <BasePayButton
-                        onClick={() => handleTipPayment('1.00', 'A coin for the jester!')}
-                        colorScheme="light"
-                      />
+                  {/* $1 Tip Only */}
+                  <div className="flex flex-col items-center">
+                    <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-2 shadow-lg">
+                      Toss a Coin - $1 💰
                     </div>
-                    
-                    {/* $3 Tip */}
-                    <div className="flex flex-col items-center">
-                      <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-2 shadow-lg">
-                        Support the Arts - $3 🎨
-                      </div>
-                      <BasePayButton
-                        onClick={() => handleTipPayment('3.00', 'A generous patron!')}
-                        colorScheme="light"
-                      />
-                    </div>
-                    
-                    {/* $5 Tip */}
-                    <div className="flex flex-col items-center">
-                      <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-2 shadow-lg">
-                        Royal Patronage - $5 👑
-                      </div>
-                      <BasePayButton
-                        onClick={() => handleTipPayment('5.00', 'A noble benefactor!')}
-                        colorScheme="light"
-                      />
-                    </div>
+                    <BasePayButton
+                      onClick={() => handleTip('1.00', 'A coin for the jester!')}
+                      colorScheme="light"
+                    />
                   </div>
+                  
                 </div>
               )}
             </div>
@@ -234,7 +218,7 @@ export default function FortuneCookie() {
               <a 
                 href="https://x.com/stellarextinct" 
                 target="_blank" 
-                rel="noopener noreferrer"
+                rel="noOpener noreferrer"
                 className="text-blue-400 hover:text-blue-300 underline"
               >
                 X
