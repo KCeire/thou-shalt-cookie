@@ -154,13 +154,13 @@ export default function FortuneCookie() {
                 <div className="mt-6 pt-4 border-t border-white/20">
                   <p className="text-amber-300 text-sm mb-4">Enjoyed the wisdom? Support the Bard! 🎭</p>
                   
-                  {/* $1 Tip Only */}
+                  {/* $0.25 Tip Only */}
                   <div className="flex flex-col items-center">
                     <div className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold mb-2 shadow-lg">
-                      Toss a Coin - $1 💰
+                      Toss a Coin - $0.25c 💰
                     </div>
                     <BasePayButton
-                      onClick={() => handleTip('1.00', 'A coin for the jester!')}
+                      onClick={() => handleTip('0.25', 'A coin for the jester!')}
                       colorScheme="light"
                     />
                   </div>
